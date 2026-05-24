@@ -1,0 +1,1 @@
+enum GamePhase { idle, selected, matched, wrong, completed }
