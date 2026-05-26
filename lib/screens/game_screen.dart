@@ -92,7 +92,10 @@ class GameScreenState extends State<GameScreen> {
     final wordPair = _currentPairs[pairIndex];
     if (_matchedIds.contains(wordPair.id)) return;
 
-    // Don't play TTS on tap anymore — handled on match result instead
+    // Audio mode: play TTS on any card tap
+    if (widget.config.isAudioMode) {
+      _sound.speakEnglish(wordPair.word);
+    }
 
     if (_selectedLeftIndex == null && _selectedRightIndex == null) {
       // First selection
@@ -302,7 +305,10 @@ class GameScreenState extends State<GameScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildColumnHeader('中文释义', const Color(0xFF2196F3)),
+                    _buildColumnHeader(
+                      widget.config.isAudioMode ? '听音配对' : '中文释义',
+                      widget.config.isAudioMode ? const Color(0xFF9C27B0) : const Color(0xFF2196F3),
+                    ),
                     const SizedBox(height: 8),
                     Expanded(
                       child: ListView.builder(
@@ -311,7 +317,7 @@ class GameScreenState extends State<GameScreen> {
                           final pairIdx = _leftIndices[i];
                           final pair = _currentPairs[pairIdx];
                           return MatchCard(
-                            text: pair.translation,
+                            text: widget.config.isAudioMode ? '......' : pair.translation,
                             isSelected: _selectedLeftIndex == i,
                             isMatched: _matchedIds.contains(pair.id),
                             isWrong: _isCardWrong(true, i),
@@ -329,7 +335,10 @@ class GameScreenState extends State<GameScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildColumnHeader('English', const Color(0xFF4CAF50)),
+                    _buildColumnHeader(
+                      widget.config.isAudioMode ? '中文释义' : 'English',
+                      widget.config.isAudioMode ? const Color(0xFF2196F3) : const Color(0xFF4CAF50),
+                    ),
                     const SizedBox(height: 4),
                     Expanded(
                       child: ListView.builder(
@@ -338,7 +347,7 @@ class GameScreenState extends State<GameScreen> {
                           final pairIdx = _rightIndices[i];
                           final pair = _currentPairs[pairIdx];
                           return MatchCard(
-                            text: pair.word,
+                            text: pair.translation,
                             isSelected: _selectedRightIndex == i,
                             isMatched: _matchedIds.contains(pair.id),
                             isWrong: _isCardWrong(false, i),

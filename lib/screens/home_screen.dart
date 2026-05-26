@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _wrongWordsCount = 0;
   int _lastScore = 0;
   bool _loading = true;
+  bool _isAudioMode = false;
 
   final List<int> _timeOptions = [60, 90, 120, 180];
 
@@ -216,6 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _buildDifficultySelector(),
+                    const SizedBox(height: 16),
+                    _buildModeSelector(),
                     const SizedBox(height: 24),
                     _buildPlayButton(),
                     const SizedBox(height: 16),
@@ -304,6 +307,66 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModeSelector() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.headphones_outlined, size: 20, color: Color(0xFF666666)),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              '听音配对模式',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF333333),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => setState(() => _isAudioMode = !_isAudioMode),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              width: 52,
+              height: 28,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                color: _isAudioMode
+                    ? const Color(0xFF9C27B0)
+                    : const Color(0xFFE0E0E0),
+              ),
+              padding: const EdgeInsets.all(2),
+              child: Align(
+                alignment:
+                    _isAudioMode ? Alignment.centerRight : Alignment.centerLeft,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -531,7 +594,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => GameScreen(
-          config: GameConfig(timeLimitSeconds: _timeLimit),
+          config: GameConfig(
+            timeLimitSeconds: _timeLimit,
+            isAudioMode: _isAudioMode,
+          ),
           wordPool: wordPool,
         ),
       ),

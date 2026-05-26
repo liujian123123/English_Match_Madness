@@ -1,7 +1,11 @@
 class GameConfig {
   final int timeLimitSeconds;
+  final bool isAudioMode;
 
-  const GameConfig({required this.timeLimitSeconds});
+  const GameConfig({
+    required this.timeLimitSeconds,
+    this.isAudioMode = false,
+  });
 
   int get visiblePairs => 4;
 
@@ -19,4 +23,6 @@ class GameConfig {
         return '';
     }
   }
+
+  String get modeLabel => isAudioMode ? '听音配对' : '文字配对';
 }
